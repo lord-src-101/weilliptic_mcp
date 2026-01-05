@@ -1,0 +1,78 @@
+======================================================================
+MCP SNIPPETS FOR C++ (Generated from credit_score.widl)
+======================================================================
+
+1. PASTE THIS INSIDE YOUR CLASS IN 'contract.hpp'
+--------------------------------------------------
+    std::string tools() const {
+        return R"JSON(        [
+  {
+    "type": "function",
+    "function": {
+      "name": "get_score",
+      "description": "compute a credit score based on financial and payment behavior (returns score as f64, higher is better)\n",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "account_age_months": {
+            "type": "integer",
+            "description": "age of the account in months\n"
+          },
+          "monthly_income_avg": {
+            "type": "number",
+            "description": "average monthly income\n"
+          },
+          "income_frequency": {
+            "type": "string",
+            "description": "income frequency (only acceptable parameter is - \"High – Consistent\", \"Medium – Variable\", \"Low-Unpredictable\")\n"
+          },
+          "monthly_rent": {
+            "type": "number",
+            "description": "average monthly rent expense\n"
+          },
+          "monthly_utilities": {
+            "type": "number",
+            "description": "average monthly utilities expense\n"
+          },
+          "missed_payments_count": {
+            "type": "integer",
+            "description": "total number of missed payments\n"
+          }
+        },
+        "required": [
+          "account_age_months",
+          "monthly_income_avg",
+          "income_frequency",
+          "monthly_rent",
+          "monthly_utilities",
+          "missed_payments_count"
+        ]
+      }
+    }
+  }
+])JSON";
+    }
+
+2. PASTE THIS INSIDE 'method_kind_data()' IN 'main.cpp'
+-------------------------------------------------------
+    method_kind_mapping["tools"] = "query";
+
+3. PASTE THIS AT THE END OF YOUR EXTERN "C" BLOCK IN 'main.cpp'
+--------------------------------------------------------------
+extern "C" void tools() __attribute__((export_name("tools")));
+
+void tools() {
+    // 1. Recover state
+    std::string stateString = weilsdk::Runtime::state();
+    nlohmann::ordered_json j = nlohmann::ordered_json::parse(stateString);
+    from_json(j, credit_score_instance);
+
+    // 2. Get tools JSON string
+    std::string tools_json_raw = credit_score_instance.tools();
+
+    // 3. Wrap as a JSON string to satisfy the host's type expectation
+    nlohmann::ordered_json result_wrapper = tools_json_raw;
+    weilsdk::Runtime::setResult(result_wrapper.dump(), 0);
+}
+
+======================================================================

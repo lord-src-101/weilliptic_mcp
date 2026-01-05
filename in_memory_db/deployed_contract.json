@@ -1,0 +1,29 @@
+{
+  "batch_author": "p-guw1m-1.us-west1.main.weilliptic.net-8000",
+  "batch_id": "8edb6fc7f62a45a47e577b4487e66d52466ba43259d1ba0192bf227ef25a0b84",
+  "block_height": 13629,
+  "contract_address": "aaaaaa7rjbuta52zxqyzfybdvngbrxgv5jeaocz3voyxyxjjfiblnoelsa",
+  "creation_time": "2026-01-03T03:42:18Z",
+  "method_kind": "Mutate",
+  "status": "Finalized",
+  "tx_idx": 0,
+  "txn_result": "{\"Ok\":\"null\"}",
+  "txn_ticket": "aaaaaa3v63p2w5se7tfxasin4gywv2al65b2ukyxskyyclszfhgzqwc2ae"
+}
+
+
+// '{"table":"sample","key":"82111","field":"name","value":"RG"}'
+// '{"table":"sample","key":"82111","field":"GF","value":"khair..."}'
+// '{"table":"sample","key":"82111"}'
+
+    mutate func insert_record(
+        table: string,
+        key: string,
+        fields: list<tuple<string, string>>
+    ) -> int;
+
+    '{"table":"sample","key":"82112","fields":[["name","rg"],["place","kolkaata"],["school","ju"]]}'
+    '{"table":"sample","key":"82112","fields":["name","school"]}'
+
+'{"table":"test_table_v1","key":"553457a4fa0cbf93041613ad7dc67e21725075f9f3c9bdf642622d65171d3b8e"}'
+    

@@ -1,0 +1,24 @@
+@mcp
+interface credit_score {
+
+    // compute a credit score based on financial and payment behavior (returns score as f64, higher is better)
+    query func get_score(
+        // age of the account in months
+        account_age_months: uint,
+
+        // average monthly income
+        monthly_income_avg: f64,
+
+        // income frequency (only acceptable parameter is - "High – Consistent", "Medium – Variable", "Low-Unpredictable")
+        income_frequency: string,
+
+        // average monthly rent expense
+        monthly_rent: f64,
+
+        // average monthly utilities expense
+        monthly_utilities: f64,
+
+        // total number of missed payments
+        missed_payments_count: uint
+    ) -> f64
+}

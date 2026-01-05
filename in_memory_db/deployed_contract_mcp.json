@@ -1,0 +1,12 @@
+{
+  "batch_author": "p-guw1m-3.us-west1.main.weilliptic.net-8000",
+  "batch_id": "2aac14347d16c722daee8380c6bb9102a1dbb53638807c0a20134c323a2d5871",
+  "block_height": 1497344,
+  "contract_address": "aaaaaa6tugyuk6qppbaqrinz3ew4tvlaezbyxhvc5ehlesz7qon2d3hwtm",
+  "creation_time": "2026-01-04T20:57:09Z",
+  "method_kind": "Mutate",
+  "status": "Finalized",
+  "tx_idx": 0,
+  "txn_result": "{\"Ok\":\"null\"}",
+  "txn_ticket": "aaaaaazlox64d2tm7hqc27zrjrseqhm6ckilk3xkzwlntfv5giv4gsbkz4"
+}

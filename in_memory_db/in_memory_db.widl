@@ -1,0 +1,115 @@
+@mcp
+interface in_memory_db {
+
+
+// creates a table (returns 200 success, 409 already exists, 400 invalid name)
+mutate func create_table(
+    // name of the table to be created
+    table_name: string
+) -> int;
+
+// drops/deletes a table (returns 200 success, 404 table not found)
+mutate func drop_table(
+    // name of the table to be deleted
+    table_name: string
+) -> int;
+
+// list all the tables present in db now (returns list of table names, empty if none)
+query func list_tables() -> list<string>;
+
+// gives size of any table (returns record count, 404 table not found)
+query func table_size(
+    // name of the table
+    table_name: string
+) -> int;
+
+// inserts field-value pair for a given key (returns 200 success, 404 table missing, 400 invalid input)
+mutate func insert(
+    // name of the table
+    table: string,
+    // the key / primary key of the record
+    key: string,
+    // the field name inside the record
+    field: string,
+    // the value associated with the field
+    value: string
+) -> int;
+
+// updates a field value for a given key (returns 200 success, 404 table or record missing)
+mutate func update(
+    // name of the table
+    table: string,
+    // the key / primary key of the record
+    key: string,
+    // the field name to update
+    field: string,
+    // the new value of the field
+    value: string
+) -> int;
+
+// get a single field value (returns Some(value) if found, None otherwise)
+query func get_value(
+    // name of the table
+    table: string,
+    // the key / primary key of the record
+    key: string,
+    // the field name whose value is requested
+    field: string
+) -> option<string>;
+
+// removes a field from a record (returns 200 success, 404 table or record missing)
+mutate func remove_field(
+    // name of the table
+    table: string,
+    // the key / primary key of the record
+    key: string,
+    // the field name to be removed
+    field: string
+) -> int;
+
+// removes a complete record (returns 200 success, 404 table missing)
+mutate func remove_record(
+    // name of the table
+    table: string,
+    // the key / primary key of the record
+    key: string
+) -> int;
+
+//insert or replace a full record atomically (returns 200 success, 404 table missing, 400 invalid input)
+mutate func insert_record(
+    // name of the table
+    table: string,
+    // the key / primary key of the record
+    key: string,
+    // list of field-value pairs representing the record
+    fields: list<tuple<string, string>>
+) -> int;
+
+// batch insert multiple full records (returns 200 success, non-200 on partial/full failure)
+mutate func insert_records(
+    // name of the table
+    table: string,
+    // list of records where each record is (key, fields)
+    records: list<tuple<string, list<tuple<string, string>>>>
+) -> int;
+
+// retrieve multiple fields from a record (returns list of existing field-value pairs)
+query func get_fields(
+    // name of the table
+    table: string,
+    // the key / primary key of the record
+    key: string,
+    // list of field names to retrieve
+    fields: list<string>
+) -> list<tuple<string, string>>;
+
+// retrieve the full record (returns all field-value pairs, empty if record missing)
+query func get_all_fields(
+    // name of the table
+    table: string,
+    // the key / primary key of the record
+    key: string
+) -> list<tuple<string, string>>
+
+
+}

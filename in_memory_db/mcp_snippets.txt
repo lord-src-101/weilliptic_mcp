@@ -1,0 +1,306 @@
+======================================================================
+MCP SNIPPETS FOR C++ (Generated from in_memory_db.widl.widl)
+======================================================================
+
+1. PASTE THIS INSIDE YOUR CLASS IN 'contract.hpp'
+--------------------------------------------------
+    std::string tools() const {
+        return R"JSON(        [
+  {
+    "type": "function",
+    "function": {
+      "name": "create_table",
+      "description": "creates a table (returns 200 success, 409 already exists, 400 invalid name)\n",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "table_name": {
+            "type": "string",
+            "description": "name of the table to be created\n"
+          }
+        },
+        "required": [
+          "table_name"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "drop_table",
+      "description": "drops/deletes a table (returns 200 success, 404 table not found)\n",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "table_name": {
+            "type": "string",
+            "description": "name of the table to be deleted\n"
+          }
+        },
+        "required": [
+          "table_name"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "list_tables",
+      "description": "list all the tables present in db now (returns list of table names, empty if none)\n",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "table_size",
+      "description": "gives size of any table (returns record count, 404 table not found)\n",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "table_name": {
+            "type": "string",
+            "description": "name of the table\n"
+          }
+        },
+        "required": [
+          "table_name"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "insert",
+      "description": "inserts field-value pair for a given key (returns 200 success, 404 table missing, 400 invalid input)\n",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "table": {
+            "type": "string",
+            "description": "name of the table\n"
+          },
+          "key": {
+            "type": "string",
+            "description": "the key / primary key of the record\n"
+          },
+          "field": {
+            "type": "string",
+            "description": "the field name inside the record\n"
+          },
+          "value": {
+            "type": "string",
+            "description": "the value associated with the field\n"
+          }
+        },
+        "required": [
+          "table",
+          "key",
+          "field",
+          "value"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "update",
+      "description": "updates a field value for a given key (returns 200 success, 404 table or record missing)\n",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "table": {
+            "type": "string",
+            "description": "name of the table\n"
+          },
+          "key": {
+            "type": "string",
+            "description": "the key / primary key of the record\n"
+          },
+          "field": {
+            "type": "string",
+            "description": "the field name to update\n"
+          },
+          "value": {
+            "type": "string",
+            "description": "the new value of the field\n"
+          }
+        },
+        "required": [
+          "table",
+          "key",
+          "field",
+          "value"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_value",
+      "description": "get a single field value (returns Some(value) if found, None otherwise)\n",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "table": {
+            "type": "string",
+            "description": "name of the table\n"
+          },
+          "key": {
+            "type": "string",
+            "description": "the key / primary key of the record\n"
+          },
+          "field": {
+            "type": "string",
+            "description": "the field name whose value is requested\n"
+          }
+        },
+        "required": [
+          "table",
+          "key",
+          "field"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "remove_field",
+      "description": "removes a field from a record (returns 200 success, 404 table or record missing)\n",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "table": {
+            "type": "string",
+            "description": "name of the table\n"
+          },
+          "key": {
+            "type": "string",
+            "description": "the key / primary key of the record\n"
+          },
+          "field": {
+            "type": "string",
+            "description": "the field name to be removed\n"
+          }
+        },
+        "required": [
+          "table",
+          "key",
+          "field"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "remove_record",
+      "description": "removes a complete record (returns 200 success, 404 table missing)\n",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "table": {
+            "type": "string",
+            "description": "name of the table\n"
+          },
+          "key": {
+            "type": "string",
+            "description": "the key / primary key of the record\n"
+          }
+        },
+        "required": [
+          "table",
+          "key"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_fields",
+      "description": "retrieve multiple fields from a record (returns list of existing field-value pairs)\n",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "table": {
+            "type": "string",
+            "description": "name of the table\n"
+          },
+          "key": {
+            "type": "string",
+            "description": "the key / primary key of the record\n"
+          },
+          "fields": {
+            "type": "array",
+            "description": "list of field names to retrieve\n"
+          }
+        },
+        "required": [
+          "table",
+          "key",
+          "fields"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_all_fields",
+      "description": "retrieve the full record (returns all field-value pairs, empty if record missing)\n",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "table": {
+            "type": "string",
+            "description": "name of the table\n"
+          },
+          "key": {
+            "type": "string",
+            "description": "the key / primary key of the record\n"
+          }
+        },
+        "required": [
+          "table",
+          "key"
+        ]
+      }
+    }
+  }
+])JSON";
+    }
+
+2. PASTE THIS INSIDE 'method_kind_data()' IN 'main.cpp'
+-------------------------------------------------------
+    method_kind_mapping["tools"] = "query";
+
+3. PASTE THIS AT THE END OF YOUR EXTERN "C" BLOCK IN 'main.cpp'
+--------------------------------------------------------------
+extern "C" void tools() __attribute__((export_name("tools")));
+
+void tools() {
+    // 1. Recover state
+    std::string stateString = weilsdk::Runtime::state();
+    nlohmann::ordered_json j = nlohmann::ordered_json::parse(stateString);
+    from_json(j, in_memory_db_instance);
+
+    // 2. Get tools JSON string
+    std::string tools_json_raw = in_memory_db_instance.tools();
+
+    // 3. Wrap as a JSON string to satisfy the host's type expectation
+    nlohmann::ordered_json result_wrapper = tools_json_raw;
+    weilsdk::Runtime::setResult(result_wrapper.dump(), 0);
+}
+
+======================================================================
