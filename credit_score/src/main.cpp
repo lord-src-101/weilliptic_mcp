@@ -118,8 +118,7 @@ extern "C" {
         method_kind_mapping["get_score"] = "query";
         method_kind_mapping["tools"] = "query";
         nlohmann::ordered_json json_object = method_kind_mapping;
-        std::string serializ
-        ed_string = json_object.dump();
+        std::string serialized_string = json_object.dump();
         weilsdk::Runtime::setResult(serialized_string, 0);
     }
     
