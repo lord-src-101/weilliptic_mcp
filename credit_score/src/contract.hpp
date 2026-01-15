@@ -2,7 +2,9 @@
 #ifndef CREDIT_SCORE_CONTRACT_HPP
 #define CREDIT_SCORE_CONTRACT_HPP
     
-    
+#include <cmath>
+#include <algorithm>
+#include <cstdint>
 #include <string>
 #include <tuple>
 #include <optional>
@@ -40,59 +42,53 @@ class credit_score_ContractState {
     
         // Query
     double get_score(const uint32_t &account_age_months, const double &monthly_income_avg, const std::string &income_frequency, const double &monthly_rent, const double &monthly_utilities, const uint32_t &missed_payments_count)const{
-            // --- 1. DATA EXTRACTION ---
-    double monthly_income = monthly_income_avg;
     
-    // Sum 'Survival' obligations only (Rent + Utilities)
-    double essential_expenses = monthly_rent+monthly_utilities;
+    // Logic: Quadratic Falloff. 
+    // Small expenses (10-20%) are equally "good". High expenses (60-70%) drop score rapidly.
+    double essential_expenses = monthly_rent + monthly_utilities;
+    double score_affordability = 0.0;
     
-
-    // --- 2. CASH FLOW COVERAGE (Weight: 50%) ---
-    if (monthly_income <= 0.1) return 0.0; // Fail safe
-
-    double free_cash_flow = monthly_income - essential_expenses;
-    double coverage_ratio = free_cash_flow / monthly_income; 
-
-    // Math: (Ratio / 0.40) * 50.0
-    // If they have 40% free cash, they get full 50 points.
-    double score_cash = (std::min(coverage_ratio, 0.40) / 0.40) * 50.0;
-    score_cash = std::max(0.0, score_cash);
-
-    // --- 3. STABILITY (Weight: 30%) ---
-    // Split: 25 pts for Consistency, 5 pts for Account Age
-    
-    // Part A: Income Consistency (Max 25)
-    double score_consistency = 0.0;
-    std::string consistency = income_frequency;
-
-    if (consistency == "High – Consistent") {
-        score_consistency = 25.0; 
-    } 
-    else if (consistency == "Medium – Variable") {
-        score_consistency = 15.0; 
-    } 
-    else {
-        score_consistency = 5.0;  
+    // Protect against division by zero
+    if (monthly_income_avg > 1.0) {
+        double expense_ratio = essential_expenses / monthly_income_avg;
+        double threshold = 0.70; // If expenses > 70% of income, score is 0.
+        
+        if (expense_ratio < threshold) {
+            // Formula: Max * (1 - (Ratio / Threshold)^2)
+            score_affordability = 45.0 * (1.0 - std::pow(expense_ratio / threshold, 2.0));
+        }
     }
 
-    // Part B: Account Age Bonus (Max 5)
-    // Logic: 0.5 points per month. Need 10 months history for full bonus.
-    int age_months = account_age_months;
-    double age_bonus = std::min((double)age_months * 0.5, 5.0);
+    // --- 2. RELIABILITY (Weight: 35%) ---
+    // Logic: Exponential Decay.
+    // 0 misses = 35 pts. 1 miss = 21 pts. 2 misses = 12.6 pts.
+    // This punishes early mistakes hard but never hits "hard zero".
+    double score_reliability = 35.0 * std::pow(0.60, missed_payments_count);
 
-    // Total Stability
-    double score_stability = score_consistency + age_bonus;
 
-    // --- 4. RELIABILITY (Weight: 20%) ---
-    // Logic: Start with 20, lose 10 per miss.
-    int missed = missed_payments_count;
-    double score_reliability = std::max(0.0, 20.0 - (missed * 10.0));
-
-    // --- 5. FINAL RAW SCORE ---
-    double final_raw_score = score_cash + score_stability + score_reliability;
-
-    return floor(final_raw_score);
+    // --- 3. STABILITY (Weight: 20%) ---
+    
+    // Part A: Income Consistency (Max 10)
+    double score_consistency = 2.0; // Default/Low
+    if (income_frequency == "High – Consistent") {
+        score_consistency = 10.0;
+    } else if (income_frequency == "Medium – Variable") {
+        score_consistency = 6.0;
     }
+
+    // Part B: History (Max 10)
+    // Logic: Soft Saturation (Diminishing Returns).
+    // Uses k=12. Users get 50% of points (5 pts) at 12 months.
+    // They get 80% of points (8 pts) at 48 months.
+    double k_factor = 12.0;
+    double score_history = 10.0 * ((double)account_age_months / (account_age_months + k_factor));
+
+    double score_stability = score_consistency + score_history;
+
+    // --- FINAL SCORE ---
+    // Clamping to 100.0 to ensure floating point math doesn't exceed bounds slightly.
+    return std::min(100.0, score_affordability + score_reliability + score_stability);
+}
 
 
         std::string tools() const {
